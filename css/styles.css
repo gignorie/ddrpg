@@ -1,0 +1,561 @@
+/* ============================================================
+   DDRPG - Divine Divinity-Inspired Mobile RPG
+   Mobile-first responsive styles
+   ============================================================ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-user-drag: none;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #0a0a12;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: #e8e0c8;
+    touch-action: none;
+    overscroll-behavior: none;
+}
+
+/* Disable text selection / context menu on all game elements */
+#game-root, #game-root * {
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-user-drag: none;
+    user-select: none;
+}
+
+#game-root {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+    background: radial-gradient(ellipse at center, #1a1626 0%, #0a0a12 100%);
+}
+
+#game-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    touch-action: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-user-drag: none;
+    user-select: none;
+}
+
+/* ---------- HUD ---------- */
+#hud {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none;
+    z-index: 10;
+}
+
+#hud > * { pointer-events: auto; }
+
+/* Top Bar: HP / Mana orbs */
+#top-bar {
+    position: absolute;
+    top: env(safe-area-inset-top, 8px);
+    left: 8px;
+    right: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    pointer-events: none;
+    z-index: 12;
+}
+
+#orbs {
+    display: flex;
+    gap: 8px;
+    pointer-events: none;
+}
+
+.orb {
+    width: 64px;
+    height: 64px;
+    position: relative;
+    background: rgba(0,0,0,0.45);
+    border: 2px solid #4a3e2e;
+    border-radius: 50%;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.6), inset 0 0 12px rgba(0,0,0,0.5);
+}
+.orb .fill {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    transition: height 0.3s ease;
+}
+.orb.hp .fill { background: linear-gradient(0deg, #8b1a1a 0%, #d63a3a 50%, #ff7070 100%); }
+.orb.mana .fill { background: linear-gradient(0deg, #1a3a8b 0%, #3a6ad6 50%, #70a0ff 100%); }
+.orb .label {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.9);
+    z-index: 2;
+}
+
+/* Action button (top-right) */
+#action-btn {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #c9a44c 0%, #8a6a2c 100%);
+    border: 2px solid #5a4a2c;
+    color: #2a1a08;
+    font-weight: bold;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,255,255,0.3);
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+#action-btn:active { transform: scale(0.94); }
+
+/* Quick-slot bar (bottom-center) */
+#quickslots {
+    position: absolute;
+    bottom: calc(env(safe-area-inset-bottom, 8px) + 16px);
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 4px;
+    background: rgba(0,0,0,0.55);
+    padding: 4px;
+    border-radius: 6px;
+    border: 1px solid #3a2e1e;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+}
+.qslot {
+    width: 48px;
+    height: 48px;
+    background: rgba(40,30,20,0.7);
+    border: 1px solid #4a3a2a;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    font-size: 22px;
+}
+.qslot .key {
+    position: absolute;
+    top: 1px; left: 3px;
+    font-size: 9px;
+    color: #8a7a5a;
+    font-weight: bold;
+}
+.qslot.filled { border-color: #c9a44c; box-shadow: 0 0 6px rgba(201,164,76,0.4); }
+.qslot .item-icon { font-size: 26px; }
+.qslot .count {
+    position: absolute;
+    bottom: 1px; right: 3px;
+    font-size: 10px;
+    color: #fff;
+    font-weight: bold;
+    text-shadow: 0 1px 2px #000;
+}
+
+/* Virtual joystick (bottom-left) */
+#joystick {
+    position: absolute;
+    bottom: calc(env(safe-area-inset-bottom, 8px) + 24px);
+    left: 24px;
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.25);
+    border: 2px solid rgba(201,164,76,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: auto;
+    touch-action: none;
+    z-index: 11;
+}
+#joystick .stick {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #d6b864 0%, #8a6a2c 100%);
+    border: 2px solid #5a4a2c;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+    transition: transform 0.05s;
+}
+
+/* Inventory button (bottom-right) */
+#inv-btn {
+    position: absolute;
+    bottom: calc(env(safe-area-inset-bottom, 8px) + 30px);
+    right: 24px;
+    width: 64px;
+    height: 64px;
+    border-radius: 12px;
+    background: linear-gradient(180deg, #5a4a2e 0%, #3a2a1e 100%);
+    border: 2px solid #c9a44c;
+    color: #f0d090;
+    font-size: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.6);
+    cursor: pointer;
+    z-index: 11;
+}
+#inv-btn:active { transform: scale(0.94); }
+
+/* Floating action hint */
+#action-hint {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0,0,0,0.85);
+    color: #f0d090;
+    padding: 12px 20px;
+    border-radius: 8px;
+    border: 1px solid #c9a44c;
+    font-size: 15px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.25s;
+    z-index: 50;
+    text-align: center;
+    max-width: 80%;
+}
+#action-hint.show { opacity: 1; }
+
+/* ---------- Inventory panel ---------- */
+#inventory {
+    position: absolute;
+    top: 0; right: 0; bottom: 0;
+    width: min(380px, 88vw);
+    background: linear-gradient(180deg, #1a140a 0%, #0a0805 100%);
+    border-left: 2px solid #4a3a1e;
+    transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 30;
+    display: flex;
+    flex-direction: column;
+    box-shadow: -8px 0 24px rgba(0,0,0,0.7);
+}
+#inventory.open { transform: translateX(0); }
+
+#inventory header {
+    padding: 14px 16px;
+    background: linear-gradient(180deg, #3a2a1e 0%, #1a140a 100%);
+    border-bottom: 1px solid #4a3a1e;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+#inventory header h2 {
+    font-size: 18px;
+    color: #f0d090;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+#inventory header .weight {
+    font-size: 12px;
+    color: #a09070;
+}
+#inventory .close {
+    background: none;
+    border: 1px solid #6a5a3a;
+    color: #f0d090;
+    width: 30px;
+    height: 30px;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+#inv-grid {
+    flex: 1;
+    padding: 12px;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+    overflow-y: auto;
+    align-content: start;
+}
+
+.inv-slot {
+    aspect-ratio: 1;
+    background: rgba(40,30,20,0.6);
+    border: 1px solid #4a3a2a;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    font-size: 26px;
+    transition: background 0.15s, border-color 0.15s, transform 0.1s;
+}
+.inv-slot.filled { border-color: #c9a44c; background: rgba(60,45,25,0.7); }
+.inv-slot.dragover { background: rgba(201,164,76,0.3); border-color: #f0d090; }
+.inv-slot .count {
+    position: absolute;
+    bottom: 1px; right: 3px;
+    font-size: 10px;
+    color: #fff;
+    font-weight: bold;
+    text-shadow: 0 1px 2px #000;
+}
+.inv-slot.dragging { opacity: 0.4; }
+
+#inv-footer {
+    padding: 10px 16px;
+    background: rgba(0,0,0,0.4);
+    border-top: 1px solid #4a3a1e;
+    display: flex;
+    gap: 8px;
+    font-size: 11px;
+    color: #a09070;
+    flex-wrap: wrap;
+}
+#inv-footer kbd {
+    background: #2a1e0e;
+    border: 1px solid #4a3a1e;
+    padding: 2px 5px;
+    border-radius: 3px;
+    color: #f0d090;
+    font-family: monospace;
+}
+
+/* ---------- Container popup (chest) ---------- */
+#container {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 40;
+    padding: 12px;
+}
+#container.open { display: flex; }
+#container .panel {
+    background: linear-gradient(180deg, #1a140a 0%, #0a0805 100%);
+    border: 2px solid #4a3a1e;
+    border-radius: 8px;
+    width: min(360px, 100%);
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.8);
+}
+#container header {
+    padding: 12px 16px;
+    background: linear-gradient(180deg, #3a2a1e 0%, #1a140a 100%);
+    border-bottom: 1px solid #4a3a1e;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 6px 6px 0 0;
+}
+#container header h2 { font-size: 16px; color: #f0d090; text-transform: uppercase; letter-spacing: 1px; }
+#container .take-all {
+    background: #5a4a2e;
+    border: 1px solid #8a6a4a;
+    color: #f0d090;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+}
+#container .close {
+    background: none;
+    border: 1px solid #6a5a3a;
+    color: #f0d090;
+    width: 28px;
+    height: 28px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 6px;
+}
+#container-grid {
+    padding: 12px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    overflow-y: auto;
+    min-height: 120px;
+}
+
+/* ---------- Tooltip ---------- */
+#tooltip {
+    position: absolute;
+    background: rgba(15,10,5,0.96);
+    border: 1px solid #c9a44c;
+    border-radius: 4px;
+    padding: 8px 10px;
+    font-size: 12px;
+    color: #f0e0c0;
+    pointer-events: none;
+    z-index: 60;
+    max-width: 240px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.8);
+    display: none;
+}
+#tooltip .t-name { color: #f0d090; font-weight: bold; margin-bottom: 4px; }
+#tooltip .t-type { color: #a09070; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+#tooltip .t-desc { color: #c0b090; font-size: 11px; line-height: 1.4; }
+
+/* ---------- Message log ---------- */
+#log {
+    position: absolute;
+    top: 88px;
+    left: 8px;
+    max-width: 50%;
+    pointer-events: none;
+    z-index: 11;
+}
+.log-msg {
+    background: rgba(0,0,0,0.7);
+    border-left: 3px solid #c9a44c;
+    color: #f0e0c0;
+    padding: 5px 10px;
+    margin-bottom: 4px;
+    font-size: 12px;
+    border-radius: 0 4px 4px 0;
+    animation: msgFade 4s forwards;
+    text-shadow: 0 1px 2px #000;
+}
+@keyframes msgFade {
+    0% { opacity: 0; transform: translateX(-10px); }
+    10% { opacity: 1; transform: translateX(0); }
+    80% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+/* ---------- Win screen ---------- */
+#win-screen {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle, rgba(201,164,76,0.2) 0%, rgba(0,0,0,0.92) 70%);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 80;
+    text-align: center;
+    flex-direction: column;
+    padding: 20px;
+}
+#win-screen.show { display: flex; }
+#win-screen h1 {
+    font-size: clamp(28px, 8vw, 48px);
+    color: #f0d090;
+    text-shadow: 0 2px 8px #000, 0 0 24px #c9a44c;
+    margin-bottom: 12px;
+    letter-spacing: 2px;
+}
+#win-screen p { color: #d0c0a0; font-size: 16px; margin-bottom: 20px; }
+#win-screen button {
+    background: linear-gradient(180deg, #c9a44c 0%, #8a6a2c 100%);
+    border: 2px solid #5a4a2c;
+    color: #2a1a08;
+    padding: 10px 24px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* ---------- Start screen ---------- */
+#start-screen {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle, rgba(201,164,76,0.15) 0%, rgba(0,0,0,0.95) 70%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    text-align: center;
+    flex-direction: column;
+    padding: 20px;
+    transition: opacity 0.5s;
+}
+#start-screen.hide { opacity: 0; pointer-events: none; }
+#start-screen h1 {
+    font-size: clamp(32px, 10vw, 56px);
+    color: #f0d090;
+    text-shadow: 0 0 24px #c9a44c, 0 2px 8px #000;
+    margin-bottom: 8px;
+    letter-spacing: 3px;
+    font-weight: bold;
+}
+#start-screen .subtitle {
+    color: #d0c0a0;
+    font-size: 14px;
+    margin-bottom: 32px;
+    letter-spacing: 1px;
+}
+#start-screen .controls-info {
+    background: rgba(0,0,0,0.5);
+    border: 1px solid #4a3a1e;
+    border-radius: 6px;
+    padding: 14px 20px;
+    margin-bottom: 24px;
+    color: #c0b090;
+    font-size: 13px;
+    line-height: 1.8;
+    max-width: 320px;
+}
+#start-screen .controls-info b { color: #f0d090; }
+#start-screen button {
+    background: linear-gradient(180deg, #c9a44c 0%, #8a6a2c 100%);
+    border: 2px solid #5a4a2c;
+    color: #2a1a08;
+    padding: 12px 36px;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    box-shadow: 0 4px 12px rgba(201,164,76,0.4);
+}
+#start-screen button:active { transform: scale(0.96); }
+
+/* Mobile responsive adjustments */
+@media (max-width: 480px) {
+    .orb { width: 56px; height: 56px; }
+    .orb .label { font-size: 16px; }
+    #joystick { width: 100px; height: 100px; }
+    #joystick .stick { width: 44px; height: 44px; }
+    .qslot { width: 44px; height: 44px; }
+    #inv-btn { width: 56px; height: 56px; }
+    #action-btn { width: 48px; height: 48px; font-size: 10px; }
+    #log { max-width: 60%; }
+    .log-msg { font-size: 11px; }
+}
+
+@media (min-width: 900px) and (pointer: fine) {
+    /* Show keyboard hint footer in inventory on desktop */
+    #inv-footer { display: flex; }
+}

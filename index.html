@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#0a0a12">
+    <title>DDRPG — Dungeon Prototype</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div id="game-root">
+        <canvas id="game-canvas"></canvas>
+
+        <!-- HUD -->
+        <div id="hud">
+            <!-- Top bar: HP/Mana + Action button -->
+            <div id="top-bar">
+                <div id="orbs">
+                    <div class="orb hp">
+                        <div class="fill"></div>
+                        <div class="label">100</div>
+                    </div>
+                    <div class="orb mana">
+                        <div class="fill"></div>
+                        <div class="label">50</div>
+                    </div>
+                </div>
+                <button id="action-btn">Use</button>
+            </div>
+
+            <!-- Message log -->
+            <div id="log"></div>
+
+            <!-- Bottom: joystick + quickslots + inventory button -->
+            <div id="joystick"><div class="stick"></div></div>
+            <div id="quickslots"></div>
+            <button id="inv-btn">🎒</button>
+        </div>
+
+        <!-- Inventory panel -->
+        <aside id="inventory">
+            <header>
+                <div>
+                    <h2>Inventory</h2>
+                    <div class="weight">Drag items to equip, use, or drop</div>
+                </div>
+                <button class="close" id="inv-close">×</button>
+            </header>
+            <div id="inv-grid"></div>
+            <div id="inv-footer">
+                <div><kbd>1</kbd>–<kbd>5</kbd> Use quickslot</div>
+                <div><kbd>I</kbd> Toggle</div>
+                <div><kbd>ESC</kbd> Close</div>
+            </div>
+        </aside>
+
+        <!-- Container popup (chest) -->
+        <div id="container">
+            <div class="panel">
+                <header>
+                    <h2 id="container-title">Chest</h2>
+                    <div>
+                        <button class="take-all" id="take-all">Take All</button>
+                        <button class="close" id="container-close">×</button>
+                    </div>
+                </header>
+                <div id="container-grid"></div>
+            </div>
+        </div>
+
+        <!-- Tooltip -->
+        <div id="tooltip"></div>
+
+        <!-- Win screen -->
+        <div id="win-screen">
+            <h1>FREEDOM!</h1>
+            <p>You have escaped the dungeon. The dawn's light greets you.</p>
+            <button id="win-restart">Play Again</button>
+        </div>
+
+        <!-- Start screen -->
+        <div id="start-screen">
+            <h1>DDRPG</h1>
+            <div class="subtitle">A Larian-style dungeon prototype</div>
+            <div class="controls-info">
+                <b>Tap</b> a tile to walk<br>
+                <b>Long-press</b> a crate/barrel to drag it<br>
+                <b>Tap</b> a chest to open &amp; loot<br>
+                <b>Find</b> the hidden key, unlock the gate, escape!<br>
+                <b>Drag</b> items to/from your quickslots
+            </div>
+            <button id="start-btn">Enter the Dungeon</button>
+        </div>
+    </div>
+
+    <!-- Scripts (load order matters) -->
+    <script>
+        // Block default context menu / text selection on the whole game
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('selectstart', e => e.preventDefault());
+        document.addEventListener('gesturestart', e => e.preventDefault());
+    </script>
+    <script src="js/Sprites.js"></script>
+    <script src="js/IsometricRenderer.js"></script>
+    <script src="js/WorldGrid.js"></script>
+    <script src="js/InventorySystem.js"></script>
+    <script src="js/InputManager.js"></script>
+    <script src="js/Player.js"></script>
+    <script src="js/AudioManager.js"></script>
+    <script src="js/InteractionManager.js"></script>
+    <script src="js/UIManager.js"></script>
+    <script src="js/Engine.js"></script>
+    <script src="js/AssetLoader.js"></script>
+    <script src="js/AtlasAssets.js"></script>
+    <script>
+        window.addEventListener('load', () => {
+            const canvas = document.getElementById('game-canvas');
+            const engine = new Engine(canvas);
+            window.engine = engine;
+            // Resize
+            const resize = () => {
+                engine.renderer.resize();
+                engine.renderer.centerOn(engine.player.x, engine.player.y);
+            };
+            window.addEventListener('resize', resize);
+            window.addEventListener('orientationchange', () => setTimeout(resize, 100));
+            resize();
+            engine.start();
+            // Try to load generated art assets in background
+            engine.loadAtlasAssets().catch(err => {
+                console.log('Atlas assets unavailable, using procedural sprites:', err.message);
+            });
+        });
+    </script>
+</body>
+</html>
